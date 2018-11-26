@@ -11,3 +11,4 @@ flask-cors
 redis
 graphene
 flask_graphql
+requests = ">=2.20.0"

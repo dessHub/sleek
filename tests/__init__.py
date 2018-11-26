@@ -1,8 +1,8 @@
 import unittest
 import json
 # import os
-from anyaudio import app
-from anyaudio.helpers.database import init_databases
+from sleek import app
+from sleek.helpers.database import init_databases
 
 init_databases()
 
