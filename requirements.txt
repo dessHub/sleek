@@ -1,0 +1,13 @@
+flask
+youtube-dl
+requests
+gunicorn
+eventlet
+greenlet
+psycopg2
+mutagen
+pafy
+flask-cors
+redis
+graphene
+flask_graphql
