@@ -153,7 +153,6 @@ def get_latest():
     }
 
     result_dict = {}
-    print(_type)
     for i in _type:
         if i in [_[0] for _ in trending_playlist]:
             ret_meta["type"] += i + ","

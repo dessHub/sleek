@@ -33,7 +33,8 @@ class Query(graphene.ObjectType):
                 title=d['title'],
                 get_url=d['get_url'],
                 suggest_url=d['suggest_url'],
-                stream_url=d['stream_url']
+                stream_url=d['stream_url'],
+                thumb = d['thumb']
             )
             l.append(t)
         return  l
