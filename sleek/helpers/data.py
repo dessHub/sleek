@@ -16,6 +16,8 @@ trending_playlist = [
     ('KPOP','https://www.youtube.com/playlist?list=PLTDluH66q5mpm-Bsq3GlwjMOHITt2bwXE'),
     ('ed', 'https://www.youtube.com/playlist?list=PLaq655wqcKDnUvTOizhqwNCiiF_grL1vh'),
     ('uk','https://www.youtube.com/playlist?list=PLFgquLnL59amEA53mO3KiIJRSNAzO-PRZ'),
+    ('edm', 'https://www.youtube.com/playlist?list=PLYVjGTi85afqxEa1ngj4H59z2B0TrfYD4'),
+    ('kenya', 'https://www.youtube.com/playlist?list=PL3lC2P-_sKSDVG_1Y2NKt342TuYNxos22')
 ]
 
 user_agents = [

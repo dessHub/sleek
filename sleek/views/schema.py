@@ -1,9 +1,18 @@
 from flask_graphql import GraphQLView
 import graphene
 import requests
+from urllib.parse import urlparse, parse_qs
+
 
 from sleek import app
+from sleek.helpers.search import get_search_results_html, get_videos, get_video_attrs
+from sleek.helpers.helpers import get_download_link_youtube
+from sleek.helpers.encryption import get_key, encode_data, decode_data
+from sleek.helpers.redis_utils import get_or_create_video_download_link
 
+class Meta(graphene.ObjectType):
+    q = graphene.String()
+    count = graphene.Int()
 
 class Track(graphene.ObjectType):
     id = graphene.String()
@@ -16,8 +25,9 @@ class Track(graphene.ObjectType):
     suggest_url = graphene.String()
     stream_url= graphene.String()
     description =graphene.String()
+    views = graphene.String()
+    # metadata = graphene.ObjectType(Meta)
 
-    
 class Query(graphene.ObjectType):
     tracks = graphene.List(Track, filter=graphene.String(), limit=graphene.Int())
     search =  graphene.List(Track, q=graphene.String())
@@ -40,20 +50,27 @@ class Query(graphene.ObjectType):
         return  l
 
     def resolve_search(self, info, q):
-        res = requests.get(f"http://localhost:5000/api/v1/search?q={q}")
-        data = res.json()
-        l = []
-        for d in data['results']:
-            t = Track(
-                id=d['id'],
-                length=d['suggest_url'],
-                title=d['title'],
-                get_url=d['get_url'],
-                suggest_url=d['suggest_url'],
-                stream_url=d['stream_url']
-            )
-            l.append(t)
-        return  l
+        raw_html = get_search_results_html(q)
+        videos =  get_videos(raw_html)
+        return_videos = []
+        for _ in videos:
+            temp = get_video_attrs(_)
+            if temp:
+                track = Track(
+                    id=temp['id'],
+                    description = temp['description'],
+                    length=temp['length'],
+                    time = temp['time'],
+                    thumb = temp['thumb'],
+                    uploader = temp['uploader'],
+                    views = temp['views'],
+                    title=temp['title'],
+                    get_url= '/api/v1' +  temp['get_url'],
+                    stream_url='/api/v1' + temp['stream_url']
+                )
+                return_videos.append(track)
+                
+        return return_videos
 
 
 schema = graphene.Schema(query=Query)
