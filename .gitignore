@@ -1,2 +1,4 @@
 SQLite.db
 /env
+__pycache__/
+.vscode
