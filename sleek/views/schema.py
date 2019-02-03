@@ -9,10 +9,13 @@ from sleek.helpers.search import get_search_results_html, get_videos, get_video_
 from sleek.helpers.helpers import get_download_link_youtube
 from sleek.helpers.encryption import get_key, encode_data, decode_data
 from sleek.helpers.redis_utils import get_or_create_video_download_link
+from sleek.helpers.lyrics import Lyrics
+
 
 class Meta(graphene.ObjectType):
     q = graphene.String()
     count = graphene.Int()
+
 
 class Track(graphene.ObjectType):
     id = graphene.String()
@@ -23,10 +26,12 @@ class Track(graphene.ObjectType):
     time = graphene.String()
     get_url = graphene.String()
     suggest_url = graphene.String()
-    stream_url= graphene.String()
-    description =graphene.String()
+    stream_url = graphene.String()
+    description = graphene.String()
     views = graphene.String()
+    lyrics = graphene.String()
     # metadata = graphene.ObjectType(Meta)
+
 
 class Query(graphene.ObjectType):
     tracks = graphene.List(Track, filter=graphene.String(), limit=graphene.Int())
@@ -37,10 +42,12 @@ class Query(graphene.ObjectType):
         data = res.json()
         l = []
         for d in data['results'][str(filter)]:
+            lyrics = Lyrics.get_lyrics(d['title'])
             t = Track(
                 id=d['id'],
                 length=d['suggest_url'],
                 title=d['title'],
+                lyrics=lyrics,
                 get_url=d['get_url'],
                 suggest_url=d['suggest_url'],
                 stream_url=d['stream_url'],
@@ -56,11 +63,13 @@ class Query(graphene.ObjectType):
         for _ in videos:
             temp = get_video_attrs(_)
             if temp:
+                lyrics = Lyrics.get_lyrics(temp['title'])
                 track = Track(
                     id=temp['id'],
                     description = temp['description'],
                     length=temp['length'],
                     time = temp['time'],
+                    lyrics=lyrics,
                     thumb = temp['thumb'],
                     uploader = temp['uploader'],
                     views = temp['views'],
@@ -69,7 +78,7 @@ class Query(graphene.ObjectType):
                     stream_url='/api/v1' + temp['stream_url']
                 )
                 return_videos.append(track)
-                
+
         return return_videos
 
 

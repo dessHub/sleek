@@ -1,4 +1,6 @@
 SQLite.db
-/env
+__init__.pyc
+env/
 __pycache__/
-.vscode
+.vscode/
+*.pyc
