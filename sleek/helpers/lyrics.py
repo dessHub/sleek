@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 class Lyrics:
     @staticmethod
-    def resolve_lyrics(artist, song_title):
+    def resolve_lyrics(artist: str, song_title: str) -> str:
         artist = artist.lower().split(',')[0]
         artist = artist.lower().split('&')[0].replace('!', 'i')
         song_title = song_title.lower().split('ft')[0]
@@ -34,7 +34,7 @@ class Lyrics:
             return str(e)
 
     @staticmethod
-    def get_lyrics(title):
+    def get_lyrics(title: str) -> str:
         title = title.split('(')[0]
         title = title.split('[')[0]
         [artist, track, *rest] = title.split('-') \
