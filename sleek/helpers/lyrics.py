@@ -40,4 +40,4 @@ class Lyrics:
         [artist, track, *rest] = title.split('-') \
             if len(title.split('-')) > 1 else ['', title]
         lyrics = Lyrics.resolve_lyrics(artist, track)
-        return '' if lyrics == 'HTTP Error 404: Not Found' else lyrics
+        return 'There are no lyrics for this song :(' if lyrics == 'HTTP Error 404: Not Found' else lyrics
