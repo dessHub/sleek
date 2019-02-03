@@ -30,13 +30,17 @@ class Track(graphene.ObjectType):
     description = graphene.String()
     views = graphene.String()
     lyrics = graphene.String()
+    track_id = graphene.String()
     # metadata = graphene.ObjectType(Meta)
 
+class Lyric(graphene.ObjectType):
+    lyrics =  graphene.String()
+    track = graphene.Field(Track)
 
 class Query(graphene.ObjectType):
     tracks = graphene.List(Track, filter=graphene.String(), limit=graphene.Int())
     search = graphene.List(Track, q=graphene.String())
-    lyrics = graphene.List(Track, title=graphene.String())
+    lyrics = graphene.Field(Lyric, track = graphene.String())
 
     def resolve_tracks(self, info, filter, limit):
         res = requests.get(f"http://localhost:5000/api/v1/trending?type={filter}&number={limit}")
@@ -45,12 +49,13 @@ class Query(graphene.ObjectType):
         for d in data['results'][str(filter)]:
             t = Track(
                 id=d['id'],
-                length=d['suggest_url'],
+                length=d['length'],
                 title=d['title'],
                 get_url=d['get_url'],
                 suggest_url=d['suggest_url'],
                 stream_url=d['stream_url'],
-                thumb = d['thumb']
+                thumb = d['thumb'],
+                track_id = encode_data(get_key(), id=d['id'], title=d['title'], length=d['length']).decode("utf-8"),
             )
             l.append(t)
         return  l
@@ -64,6 +69,7 @@ class Query(graphene.ObjectType):
             if temp:
                 track = Track(
                     id=temp['id'],
+                    track_id = encode_data(get_key(), id=temp['id'], title=temp['title'], length=temp['length']).decode("utf-8"),
                     description = temp['description'],
                     length=temp['length'],
                     time = temp['time'],
@@ -78,14 +84,15 @@ class Query(graphene.ObjectType):
 
         return return_videos
 
-    def resolve_lyrics(self, info, title):
-        print(title)
+    def resolve_lyrics(self, info, track):
+        data = decode_data(get_key(), track)
+        title  = data['title']
+
         lyrics = Lyrics.get_lyrics(title)
 
-        return [Track(
-            title=title,
+        return Lyric(
             lyrics=lyrics
-        )]
+        )
 
 
 schema = graphene.Schema(query=Query)
