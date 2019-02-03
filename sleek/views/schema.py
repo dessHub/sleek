@@ -35,19 +35,18 @@ class Track(graphene.ObjectType):
 
 class Query(graphene.ObjectType):
     tracks = graphene.List(Track, filter=graphene.String(), limit=graphene.Int())
-    search =  graphene.List(Track, q=graphene.String())
+    search = graphene.List(Track, q=graphene.String())
+    lyrics = graphene.List(Track, title=graphene.String())
 
     def resolve_tracks(self, info, filter, limit):
         res = requests.get(f"http://localhost:5000/api/v1/trending?type={filter}&number={limit}")
         data = res.json()
         l = []
         for d in data['results'][str(filter)]:
-            lyrics = Lyrics.get_lyrics(d['title'])
             t = Track(
                 id=d['id'],
                 length=d['suggest_url'],
                 title=d['title'],
-                lyrics=lyrics,
                 get_url=d['get_url'],
                 suggest_url=d['suggest_url'],
                 stream_url=d['stream_url'],
@@ -58,18 +57,16 @@ class Query(graphene.ObjectType):
 
     def resolve_search(self, info, q):
         raw_html = get_search_results_html(q)
-        videos =  get_videos(raw_html)
+        videos = get_videos(raw_html)
         return_videos = []
         for _ in videos:
             temp = get_video_attrs(_)
             if temp:
-                lyrics = Lyrics.get_lyrics(temp['title'])
                 track = Track(
                     id=temp['id'],
                     description = temp['description'],
                     length=temp['length'],
                     time = temp['time'],
-                    lyrics=lyrics,
                     thumb = temp['thumb'],
                     uploader = temp['uploader'],
                     views = temp['views'],
@@ -80,6 +77,15 @@ class Query(graphene.ObjectType):
                 return_videos.append(track)
 
         return return_videos
+
+    def resolve_lyrics(self, info, title):
+        print(title)
+        lyrics = Lyrics.get_lyrics(title)
+
+        return [Track(
+            title=title,
+            lyrics=lyrics
+        )]
 
 
 schema = graphene.Schema(query=Query)

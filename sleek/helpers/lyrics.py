@@ -5,10 +5,10 @@ from bs4 import BeautifulSoup
 
 class Lyrics:
     @staticmethod
-    def resolve_lyrics(artist, song_title):
+    def resolve_lyrics(artist: str, song_title: str) -> str:
         artist = artist.lower().split(',')[0]
-        artist = artist.lower().split('&')[0]
-        song_title = song_title.lower()
+        artist = artist.lower().split('&')[0].replace('!', 'i')
+        song_title = song_title.lower().split('ft')[0]
         # remove all except alphanumeric characters from artist and song_title
         artist = re.sub('[^A-Za-z0-9]+', "", artist)
         song_title = re.sub('[^A-Za-z0-9]+', "", song_title)
@@ -16,6 +16,7 @@ class Lyrics:
         if artist.startswith("the"):
             artist = artist[3:]
         url = "http://azlyrics.com/lyrics/"+artist+"/"+song_title+".html"
+        print(url)
 
         try:
             content = urllib.request.urlopen(url).read()
@@ -33,7 +34,7 @@ class Lyrics:
             return str(e)
 
     @staticmethod
-    def get_lyrics(title):
+    def get_lyrics(title: str) -> str:
         title = title.split('(')[0]
         title = title.split('[')[0]
         [artist, track, *rest] = title.split('-') \
