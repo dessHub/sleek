@@ -7,6 +7,8 @@ class Lyrics:
     @staticmethod
     def resolve_lyrics(artist: str, song_title: str) -> str:
         artist = artist.lower().split(',')[0]
+        artist = artist.lower().split('and')[0]
+        artist = artist.lower().split('feat')[0]
         artist = artist.lower().split('&')[0].replace('!', 'i')
         song_title = song_title.lower().split('ft')[0]
         # remove all except alphanumeric characters from artist and song_title
