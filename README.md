@@ -1,7 +1,7 @@
 # Sleek
 - A Deezer hi-fidelity clone with some borrowed ideas from spotify
 
-# Technologies
+# Backend Technologies
 - Python
 - Redis
 - GraphQL
@@ -11,8 +11,8 @@
 - Youtube-dl
 
 # Contributing
-### Frontnend
-- Find the backend repo here https://github.com/DennisWanjiru/sleek
+### Frontend
+- Find the Frontend repo here https://github.com/DennisWanjiru/sleek
 
 ### Backend
 - Fork this repo and start you contribution
